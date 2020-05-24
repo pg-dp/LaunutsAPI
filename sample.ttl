@@ -1,0 +1,14 @@
+@prefix sf:    <http://www.opengis.net/ont/sf#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix ogc:   <http://www.opengis.net/ont/geosparql#> .
+@prefix nutscode: <http://data.europa.eu/nuts/code/> .
+@prefix launuts: <http://projekt-opal.de/launuts/> .
+
+nutscode:DEA11  a          launuts:NUTS-3 , launuts:NUTS ;
+        dct:Location       []  ;
+        skos:altLabel      "Düsseldorf, Kreisfreie Stadt" ;
+        skos:broader       nutscode:DEA1 ;
+        skos:notation      "DEA11" ;
+        skos:prefLabel     "Düsseldorf" ;
+        skos:relatedMatch  <http://dbpedia.org/resource/Düsseldorf> .
