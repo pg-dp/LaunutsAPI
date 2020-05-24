@@ -1,5 +1,5 @@
 ## How to run this app ?
-This is a spring-boot Maven app. So download this repository and in the root open a terminal and run this command,
+This is a spring-boot Maven app. So download this repository and in the root folder of this repository (the folder where the pom.xml can be found) open a terminal and run this command,
 **mvn spring-boot:run**.
 
 ### Some example queries
