@@ -20,22 +20,24 @@ import org.springframework.stereotype.Controller;
 public class LaunutsController {
 	
 	@Autowired
-	private NutService nut_service;
+	private NutsService nut_service;
 	
-	Nut nut;
+	Nuts nut;
 	
-	@RequestMapping("/launuts/nut/{query_string}/json")
-	public List<Nut> getNutJson(@PathVariable String query_string) throws IOException, ParseException {
+	private String notification = "Please enter query in correct format."
+		     + "Some correct formats are like these "
+		     + "http://localhost:8080/launuts/nuts/DEA47/json,"
+		     + "http://localhost:8080/launuts/nuts/DEA47/ttl,"
+		     + "http://localhost:8080/launuts/nuts/paderborn/json"
+		     + "http://localhost:8080/launuts/nuts/paderborn/ttl";
+	
+	@RequestMapping("/launuts/nuts/{query_string}/json")
+	public List<Nuts> getNutJson(@PathVariable String query_string) throws IOException, ParseException {
 		
 		//Validate input: If user trying to enter a nut id
 		if(query_string.matches(".*\\d.*") && !(query_string.toLowerCase().matches("^((de)|(de\\D))((\\d{1})|(\\d{2})|(\\d{3}))$"))) {
 	
-			nut = new Nut("Please enter query in correct format."
-				     + "Some correct formats are like these "
-				     + "https://localhost:8080/launuts/nut/DEA47/json,"
-				     + "https://localhost:8080/launuts/nut/DEA47/ttl,"
-				     + "https://localhost:8080/launuts/nut/paderborn/json"
-				     + "https://localhost:8080/launuts/nut/paderborn/ttl");	
+			nut = new Nuts(notification);	
 			return Arrays.asList(nut);	
 		}
 		else 
@@ -43,19 +45,12 @@ public class LaunutsController {
 			
 	}
 	
-	@RequestMapping("/launuts/nut/{query_string}/ttl")
+	@RequestMapping("/launuts/nuts/{query_string}/ttl")
 	public String getNutTurtle(@PathVariable String query_string, HttpServletResponse response) throws IOException, ParseException {
 		
 		//Validate input: If user trying to enter a nut id
 		if(query_string.matches(".*\\d.*") && !(query_string.toLowerCase().matches("^((de)|(de\\D))((\\d{1})|(\\d{2})|(\\d{3}))$"))) {
-	
-			String msg = "Please enter query in correct format."
-				     + "Some correct formats are like these "
-				     + "https://localhost:8080/launuts/nut/DEA47/json,"
-				     + "https://localhost:8080/launuts/nut/DEA47/ttl,"
-				     + "https://localhost:8080/launuts/nut/paderborn/json"
-				     + "https://localhost:8080/launuts/nut/paderborn/ttl";	
-			return msg;	
+			return notification;
 		}
 		else 	
 		 nut_service.getNutTurtle(query_string.toUpperCase());
@@ -67,6 +62,13 @@ public class LaunutsController {
                response.getWriter().write(nRead);
            }
 		 return null;
+	}
+	
+	@RequestMapping("/**")
+	public List<Nuts> allOtherPaths() {
+		
+		nut = new Nuts(notification);	
+		return Arrays.asList(nut);			
 	}
 
 }

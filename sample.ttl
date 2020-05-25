@@ -5,10 +5,8 @@
 @prefix nutscode: <http://data.europa.eu/nuts/code/> .
 @prefix launuts: <http://projekt-opal.de/launuts/> .
 
-nutscode:DEA11  a          launuts:NUTS-3 , launuts:NUTS ;
-        dct:Location       []  ;
-        skos:altLabel      "Düsseldorf, Kreisfreie Stadt" ;
-        skos:broader       nutscode:DEA1 ;
-        skos:notation      "DEA11" ;
-        skos:prefLabel     "Düsseldorf" ;
-        skos:relatedMatch  <http://dbpedia.org/resource/Düsseldorf> .
+nutscode:DE113  a       launuts:NUTS-3 , launuts:NUTS ;
+        dct:Location    []  ;
+        skos:broader    nutscode:DE11 ;
+        skos:notation   "DE113" ;
+        skos:prefLabel  "Esslingen" .

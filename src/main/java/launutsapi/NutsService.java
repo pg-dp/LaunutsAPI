@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 @Service
-public class NutService {
+public class NutsService {
 
 	protected static String json_resource_file_name = "NUT_Polygons.json";
 	protected static String feature_name_type = "nut_name";
@@ -40,9 +40,9 @@ public class NutService {
 	 * pass "json" or "ttl" or "Turtle". Case is not a problem here.
 	 */
 
-	public Nut getNutJson(String query_string) throws IOException, ParseException {
+	public Nuts getNutJson(String query_string) throws IOException, ParseException {
 
-		Nut a_nut = null;
+		Nuts a_nut = null;
 
 		// JSON format response
 
@@ -51,7 +51,7 @@ public class NutService {
 		Iterator<JSONObject> nutsIterator;
 
 		try {
-			reader = new FileReader(new NutService().getClass().getClassLoader().getResource(json_resource_file_name)
+			reader = new FileReader(new NutsService().getClass().getClassLoader().getResource(json_resource_file_name)
 					.getFile().toString());
 			JSONArray nuts_array = (JSONArray) parser.parse(reader);
 			nutsIterator = nuts_array.iterator();
@@ -64,19 +64,20 @@ public class NutService {
 				String nut_name = nut.get(feature_name_type).toString();
 				String nut_id = nut.get(feature_id_type).toString();
 				String nut_level = nut.get("level").toString();
+				String geometry_type = nut.get("geometry_type").toString();
 				ArrayList<String[]> outer_ring = (ArrayList<String[]>) nut.get("outer_ring");
-				ArrayList<String[]> inner_ring = (ArrayList<String[]>) nut.get("inner_ring");
+				ArrayList<String[]> inner_rings = (ArrayList<String[]>) nut.get("inner_rings");
 
 				// If nut_id is in query parameter
 				if (query_string.toLowerCase().matches(nut_id.toLowerCase())) {
 					System.out.println("nuts_id came in query");
-					a_nut = new Nut(nut_id, nut_name, nut_level, outer_ring, inner_ring,"Query was successful");
+					a_nut = new Nuts(nut_id, nut_name, geometry_type,nut_level, outer_ring, inner_rings,"Query was successful");
 				}
 
 				// If nut_name is in query parameter
 				else if (query_string.toLowerCase().equals(nut_name.toLowerCase())) {
 					System.out.println("nut_name came in query");
-					a_nut = new Nut(nut_id, nut_name, nut_level, outer_ring, inner_ring, "Query was successful");
+					a_nut = new Nuts(nut_id, nut_name, geometry_type, nut_level, outer_ring, inner_rings, "Query was successful");
 				}
 
 			}
@@ -112,7 +113,7 @@ public class NutService {
 		// set some properties to look for
 		Property skos_pref_label = query_model.createProperty("http://www.w3.org/2004/02/skos/core#prefLabel");
 
-		query_model.read(new NutService().getClass().getClassLoader().getResource("launuts.ttl").getFile().toString());
+		query_model.read(new NutsService().getClass().getClassLoader().getResource("launuts.ttl").getFile().toString());
 		StmtIterator iterator = query_model.listStatements(new SimpleSelector(null, skos_pref_label, (RDFNode) null));
 		while (iterator.hasNext()) {
 			Statement my_st = iterator.nextStatement();

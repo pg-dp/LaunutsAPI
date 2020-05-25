@@ -1,6 +1,6 @@
 package launutsapi;
 
-public class LauService extends NutService{
+public class LauService extends NutsService{
 
 //	static {
 //		json_resource_file_name = "LAU_Polygons.json";
