@@ -6,7 +6,7 @@ This is a spring-boot Maven app. So download this repository and in the root fol
 **mvn spring-boot:run**.
 
 ### Some example queries
-- http://localhost:8080/launuts/nuts/de113/json
-- http://localhost:8080/launuts/nuts/de113/ttl
-- http://localhost:8080/launuts/nuts/berlin/json
-- http://localhost:8080/launuts/nuts/berlin/ttl
+-   http://localhost:8080/launuts/nuts/de113/json
+-   http://localhost:8080/launuts/nuts/de113/ttl
+-   http://localhost:8080/launuts/nuts/berlin/json
+-   http://localhost:8080/launuts/nuts/berlin/ttl
