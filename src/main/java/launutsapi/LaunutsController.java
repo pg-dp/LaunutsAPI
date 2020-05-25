@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.stereotype.Controller;
 
 @RestController
 public class LaunutsController {
@@ -22,7 +21,7 @@ public class LaunutsController {
 	@Autowired
 	private NutsService nut_service;
 	
-	Nuts nut;
+	private Nuts nut;
 	
 	private String notification = "Please enter query in correct format."
 		     + "Some correct formats are like these "

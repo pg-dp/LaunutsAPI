@@ -15,10 +15,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -118,14 +114,13 @@ public class NutsService {
 		while (iterator.hasNext()) {
 			Statement my_st = iterator.nextStatement();
 			Resource subject = my_st.getSubject();
-			RDFNode predicate = my_st.getPredicate();
 			RDFNode object = my_st.getObject();
 
 			/**
 			 * If user provided nut label e.g. "Paderborn" in query parameter OR If use
 			 * provided nut code e.g. DEA47 in query parameter
 			 */
-			if ((object.toString().toLowerCase().equals(query_string.toLowerCase())
+			if ((object.toString().toLowerCase().equalsIgnoreCase(query_string)
 					&& subject.toString().matches("(http:\\/\\/data\\.europa\\.eu\\/nuts\\/code\\/)(DE)(\\w+)"))
 					// This regex is to filter only for nuts
 
