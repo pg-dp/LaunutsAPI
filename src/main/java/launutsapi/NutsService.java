@@ -71,7 +71,7 @@ public class NutsService {
 				}
 
 				// If nut_name is in query parameter
-				else if (query_string.toLowerCase().equals(nut_name.toLowerCase())) {
+				else if (query_string.equalsIgnoreCase(nut_name)) {
 					System.out.println("nut_name came in query");
 					a_nut = new Nuts(nut_id, nut_name, geometry_type, nut_level, outer_ring, inner_rings, "Query was successful");
 				}
@@ -120,7 +120,7 @@ public class NutsService {
 			 * If user provided nut label e.g. "Paderborn" in query parameter OR If use
 			 * provided nut code e.g. DEA47 in query parameter
 			 */
-			if ((object.toString().toLowerCase().equalsIgnoreCase(query_string)
+			if ((object.toString().equalsIgnoreCase(query_string)
 					&& subject.toString().matches("(http:\\/\\/data\\.europa\\.eu\\/nuts\\/code\\/)(DE)(\\w+)"))
 					// This regex is to filter only for nuts
 
