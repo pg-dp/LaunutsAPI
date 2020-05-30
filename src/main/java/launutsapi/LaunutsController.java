@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.simple.JSONArray;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,13 +26,15 @@ public class LaunutsController {
 	
 	private String notification = "Please enter query in correct format."
 		     + "Some correct formats are like these "
-		     + "http://localhost:8080/launuts/nuts/DEA47/json,"
-		     + "http://localhost:8080/launuts/nuts/DEA47/ttl,"
-		     + "http://localhost:8080/launuts/nuts/paderborn/json"
-		     + "http://localhost:8080/launuts/nuts/paderborn/ttl";
+		     + "http://localhost:8080/launuts/nuts/DEA47/json, "
+		     + "http://localhost:8080/launuts/nuts/DEA47/ttl, "
+		     + "http://localhost:8080/launuts/nuts/paderborn/json, "
+		     + "http://localhost:8080/launuts/nuts/paderborn/ttl, "
+		     + "http://localhost:8080/launuts/nuts/ttl, "
+		     + "http://localhost:8080/launuts/nuts/json ";
 	
 	@RequestMapping("/launuts/nuts/{query_string}/json")
-	public List<Nuts> getNutJson(@PathVariable String query_string) throws IOException, ParseException {
+	public List<Nuts> getNutsJson(@PathVariable String query_string) throws IOException, ParseException {
 		
 		//Validate input: If user trying to enter a nut id
 		if(query_string.matches(".*\\d.*") && !(query_string.toLowerCase().matches("^((de)|(de\\D))((\\d{1})|(\\d{2})|(\\d{3}))$"))) {
@@ -40,7 +43,7 @@ public class LaunutsController {
 			return Arrays.asList(nut);	
 		}
 		else 
-			return Arrays.asList(nut_service.getNutJson(query_string));	
+			return Arrays.asList(nut_service.getNutsJson(query_string));	
 			
 	}
 	
@@ -52,7 +55,7 @@ public class LaunutsController {
 			return notification;
 		}
 		else 	
-		 nut_service.getNutTurtle(query_string.toUpperCase());
+		 nut_service.getNutsTurtle(query_string.toUpperCase());
 		 response.setContentType("text/plain;charset=UTF-8");
 		 response.setHeader("Content-Disposition", "attachment; filename=\"sample.ttl\"");
 	       InputStream inputStream = new FileInputStream(new File("sample.ttl"));
@@ -62,6 +65,24 @@ public class LaunutsController {
            }
 		 return null;
 	}
+	
+	@RequestMapping("/launuts/nuts/json")
+	public List<JSONArray> getAllNutsJson() throws IOException, ParseException {
+		return Arrays.asList(nut_service.getAllNutsJson());	
+	}
+	
+	@RequestMapping("/launuts/nuts/ttl")
+	public void getAllNutsTurtle(HttpServletResponse response) throws IOException, ParseException {
+		nut_service.getAllNutsTurtle();	
+		response.setContentType("text/plain;charset=UTF-8");
+		 response.setHeader("Content-Disposition", "attachment; filename=\"sample.ttl\"");
+	       InputStream inputStream = new FileInputStream(new File("sample.ttl"));
+          int nRead;
+          while ((nRead = inputStream.read()) != -1) {
+              response.getWriter().write(nRead);
+          }
+	}
+	
 	
 	@RequestMapping("/**")
 	public List<Nuts> allOtherPaths() {
