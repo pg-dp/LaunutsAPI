@@ -30,12 +30,6 @@ public class NutsService {
 	protected static String feature_name_type = "nut_name";
 	protected static String feature_id_type = "nut_id";
 
-	/**
-	 * How to test this service: In the query_string pass name of a city or state in
-	 * string format or as an ID e.g "Paderborn" or "DEA47". In the query_format,
-	 * pass "json" or "ttl" or "Turtle". Case is not a problem here.
-	 */
-
 	public Nuts getNutJson(String query_string) throws IOException, ParseException {
 
 		Nuts a_nut = null;
@@ -66,7 +60,6 @@ public class NutsService {
 
 				// If nut_id is in query parameter
 				if (query_string.toLowerCase().matches(nut_id.toLowerCase())) {
-					System.out.println("nuts_id came in query");
 					a_nut = new Nuts(nut_id, nut_name, geometry_type,nut_level, outer_ring, inner_rings,"Query was successful");
 				}
 
@@ -86,17 +79,11 @@ public class NutsService {
 	}
 
 	public void getNutTurtle(String query_string) {
-		
-		//String query_string = "DEA47";
-		System.out.println(query_string);
 
 		// Turtle format response
 		Model query_model = ModelFactory.createDefaultModel();
 		Model response_model = ModelFactory.createDefaultModel();
 
-//		ByteArrayOutputStream alternate_string_output_handle = new ByteArrayOutputStream();
-//		PrintStream alternate_print_stream = new PrintStream(alternate_string_output_handle);
-//		System.setOut(alternate_print_stream);
 
 		// Set namespace prefixes for response model
 		response_model.setNsPrefix("nutscode", "http://data.europa.eu/nuts/code/");
