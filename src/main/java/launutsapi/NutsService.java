@@ -8,8 +8,6 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.SimpleSelector;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
-import org.apache.jena.vocabulary.DCTerms;
-import org.apache.jena.vocabulary.DCTypes;
 import org.apache.jena.vocabulary.RDF;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -31,15 +29,15 @@ public class NutsService {
 	protected static String json_resource_file_name = "NUT_Polygons.json";
 	protected static String feature_name_type = "nut_name";
 	protected static String feature_id_type = "nut_id";
-	JSONParser parser = new JSONParser();
-	Reader reader;
+	private static JSONParser parser = new JSONParser();
+	private static Reader reader;
 
-	Model query_model = ModelFactory.createDefaultModel();
-	Model response_model = ModelFactory.createDefaultModel();
-	Property skos_pref_label = query_model.createProperty("http://www.w3.org/2004/02/skos/core#prefLabel");
-	Property ogc_as_wkt = response_model.createProperty("http://www.opengis.net/ont/geosparql#asWKT");
-	Property sf_polygon = response_model.createProperty("http://www.opengis.net/ont/sf#Polygon");
-	Property dct_location = response_model.createProperty("http://purl.org/dc/terms/Location");
+	private static Model query_model = ModelFactory.createDefaultModel();
+	private static Model response_model = ModelFactory.createDefaultModel();
+	private static Property skos_pref_label = query_model.createProperty("http://www.w3.org/2004/02/skos/core#prefLabel");
+	private static Property ogc_as_wkt = response_model.createProperty("http://www.opengis.net/ont/geosparql#asWKT");
+	private static Property sf_polygon = response_model.createProperty("http://www.opengis.net/ont/sf#Polygon");
+	private static Property dct_location = response_model.createProperty("http://purl.org/dc/terms/Location");
 
 	NutsService() {
 		// Set namespace prefixes for response model
@@ -112,7 +110,6 @@ public class NutsService {
 		while (iterator.hasNext()) {
 			Statement my_st = iterator.nextStatement();
 			Resource subject = my_st.getSubject();
-			RDFNode object = my_st.getObject();
 
 			if (subject.toString().matches("(http:\\/\\/data\\.europa\\.eu\\/nuts\\/code\\/)(DE)(\\w+)"))
 			{

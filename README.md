@@ -13,4 +13,4 @@ This is a spring-boot Maven app. So download this repository and in the root fol
 -   http://localhost:8080/launuts/nuts/ttl
 -   http://localhost:8080/launuts/nuts/json
 
-### Queries for Laus coming soon ...
+### Queries for Laus coming soon
