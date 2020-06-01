@@ -62,15 +62,15 @@ public class NutsService {
 
 			while (nutsIterator.hasNext()) {
 
-				// get next nut object
-				JSONObject nut = nutsIterator.next();
+				// get next nuts object
+				JSONObject nuts = nutsIterator.next();
 
-				String nut_name = nut.get(feature_name_type).toString();
-				String nut_id = nut.get(feature_id_type).toString();
-				String nut_level = nut.get("level").toString();
-				String geometry_type = nut.get("geometry_type").toString();
-				ArrayList<String[]> outer_ring = (ArrayList<String[]>) nut.get("outer_ring");
-				ArrayList<String[]> inner_rings = (ArrayList<String[]>) nut.get("inner_rings");
+				String nut_name = nuts.get(feature_name_type).toString();
+				String nut_id = nuts.get(feature_id_type).toString();
+				String nut_level = nuts.get("level").toString();
+				String geometry_type = nuts.get("geometry_type").toString();
+				ArrayList<String[]> outer_ring = (ArrayList<String[]>) nuts.get("outer_ring");
+				ArrayList<String[]> inner_rings = (ArrayList<String[]>) nuts.get("inner_rings");
 
 				// If nut_id is in query parameter
 				if (query_string.toLowerCase().matches(nut_id.toLowerCase())) {
@@ -115,7 +115,7 @@ public class NutsService {
 			{
 				Resource nuts = response_model.createResource(subject.toString());
 
-				// Get all the properties with statements of the nut
+				// Get all the properties with statements of the nuts
 				StmtIterator st_iterator = subject.listProperties();
 				while (st_iterator.hasNext()) {
 					Statement st = st_iterator.nextStatement();
@@ -149,8 +149,8 @@ public class NutsService {
 			RDFNode object = my_st.getObject();
 
 			/**
-			 * If user provided nut label e.g. "Paderborn" in query parameter OR If use
-			 * provided nut code e.g. DEA47 in query parameter
+			 * If user provided nuts label e.g. "Paderborn" in query parameter OR If use
+			 * provided nuts code e.g. DEA47 in query parameter
 			 */
 			if ((object.toString().equalsIgnoreCase(query_string) &&
 			// This regex is to filter only for nuts
@@ -164,7 +164,7 @@ public class NutsService {
 
 				Resource nuts = response_model.createResource(subject.toString());
 
-				// Get all the properties with statements of the nut
+				// Get all the properties with statements of the nuts
 				StmtIterator st_iterator = subject.listProperties();
 				while (st_iterator.hasNext()) {
 					Statement st = st_iterator.nextStatement();
