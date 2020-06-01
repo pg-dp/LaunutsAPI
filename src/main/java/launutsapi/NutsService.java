@@ -26,9 +26,9 @@ import java.util.Iterator;
 @Service
 public class NutsService {
 
-	protected static String json_resource_file_name = "NUT_Polygons.json";
-	protected static String feature_name_type = "nut_name";
-	protected static String feature_id_type = "nut_id";
+	protected static String json_resource_file_name = "NUTS_Polygons.json";
+	protected static String feature_name_type = "nuts_name";
+	protected static String feature_id_type = "nuts_id";
 	private static JSONParser parser = new JSONParser();
 	private static Reader reader;
 
