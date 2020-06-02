@@ -63,7 +63,7 @@ public class LauService {
 					.getFile().toString());
 			JSONArray lau_array = (JSONArray) parser.parse(reader);
 			Iterator<JSONObject> lauIterator = lau_array.iterator();
-
+			System.out.println(query_string);
 			while (lauIterator.hasNext()) {
 
 				// get next nuts object
@@ -74,15 +74,15 @@ public class LauService {
 				String geometry_type = lau.get("geometry_type").toString();
 				ArrayList<String[]> coordinates = (ArrayList<String[]>) lau.get("coordinates");
 				ArrayList<String[]> inner_rings = (ArrayList<String[]>) lau.get("inner_rings");
-
+				
 				// If nut_id is in query parameter
 				if (query_string.toLowerCase().matches(lau_id.toLowerCase())) {
 					a_lau = new Lau(lau_id, lau_name, geometry_type, coordinates, inner_rings, "Query was successful");
 				}
 
 				// If nut_name is in query parameter
-				else if (query_string.equalsIgnoreCase(lau_name)) {
-					System.out.println("lau_name came in query");
+				
+				else if (query_string.equalsIgnoreCase(lau_name) || query_string.toLowerCase().matches("^("+query_string.toLowerCase()+")")) {
 					a_lau = new Lau(lau_id, lau_name, geometry_type, coordinates, inner_rings, "Query was successful");
 				}
 
@@ -137,7 +137,7 @@ public class LauService {
 
 			// This regex is to join a nutcode with its NS e.g.
 			// http://data.europa.eu/nuts/code/DEA47
-					(subject.toString().matches(regex_for_prefix_of_laucode_from_germany + query_string))))
+					(subject.toString().matches(regex_for_prefix_of_laucode_from_germany + "\\d{8}"))))
 
 			{
 
