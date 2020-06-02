@@ -2,50 +2,48 @@ package launutsapi;
 
 import java.util.ArrayList;
 
-public class Nuts {
-
-	private String nuts_id;
-	private String nuts_name;
+public class Lau {
+	
+	private String lau_id;
+	private String lau_name;
 	private String geometry_type;
-	private String nuts_level;
 	private ArrayList<String[]> coordinates;
 	private ArrayList<String[]> inner_rings;
 	private String msg = "Query was not successful";
 	
-	public Nuts(String nuts_id, String nuts_name, String geometry_type, String nuts_level, ArrayList<String[]> coordinates,
+	
+	public Lau(String lau_id, String lau_name, String geometry_type, ArrayList<String[]> coordinates,
 			ArrayList<String[]> inner_rings, String msg) {
-		super();
-		this.nuts_id = nuts_id;
-		this.nuts_name = nuts_name;
+		this.lau_id = lau_id;
+		this.lau_name = lau_name;
 		this.geometry_type = geometry_type;
-		this.nuts_level = nuts_level;
 		this.coordinates = coordinates;
 		this.inner_rings = inner_rings;
 		this.msg = msg;
 	}
-	
-	public Nuts(String text) {
+
+	public Lau(String text) {
 		this.msg = text;
 	}
 	
-	public Nuts() {
+	public Lau() {
 		
 	}
 
-	public String getNutsid() {
-		return nuts_id;
+	public String getLauId() {
+		return lau_id;
 	}
 
-	public void setNutsId(String nuts_id) {
-		this.nuts_id = nuts_id;
+	public void setLauid(String lau_id) {
+		this.lau_id = lau_id;
 	}
 
-	public String getNutsName() {
-		return nuts_name;
+	public String getLauName() {
+		return lau_name;
 	}
 
-	public void setNutsName(String nuts_name) {
-		this.nuts_name = nuts_name;
+	public void setLauName(String lau_name) {
+		this.lau_name = lau_name;
 	}
 
 	public String getGeometryType() {
@@ -54,14 +52,6 @@ public class Nuts {
 
 	public void setGeometryType(String geometry_type) {
 		this.geometry_type = geometry_type;
-	}
-
-	public String getNutsLevel() {
-		return nuts_level;
-	}
-
-	public void setNutsLevel(String nuts_level) {
-		this.nuts_level = nuts_level;
 	}
 
 	public ArrayList<String[]> getCoordinates() {
@@ -87,8 +77,7 @@ public class Nuts {
 	public void setMsg(String msg) {
 		this.msg = msg;
 	}
-
-
 	
 	
+
 }

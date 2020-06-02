@@ -5,6 +5,7 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.SimpleSelector;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
@@ -31,24 +32,26 @@ public class NutsService {
 	protected static String feature_id_type = "nuts_id";
 	private static JSONParser parser = new JSONParser();
 	private static Reader reader;
+	
+	protected static Property skos_pref_label = ResourceFactory.createProperty("http://www.w3.org/2004/02/skos/core#prefLabel");
+	protected static Property ogc_as_wkt = ResourceFactory.createProperty("http://www.opengis.net/ont/geosparql#asWKT");
+	protected static Property sf_polygon = ResourceFactory.createProperty("http://www.opengis.net/ont/sf#Polygon");
+	protected static Property dct_location = ResourceFactory.createProperty("http://purl.org/dc/terms/Location");
+	protected static String regex_for_prefix_nutcode_from_germany = "(http:\\/\\/data\\.europa\\.eu\\/nuts\\/code\\/)(DE)(\\w+)";
+	protected static String regex_for_prefix_nutcode = "(http:\\/\\/data\\.europa\\.eu\\/nuts\\/code\\/)";
 
-	private static Model query_model = ModelFactory.createDefaultModel();
-	private static Model response_model = ModelFactory.createDefaultModel();
-	private static Property skos_pref_label = query_model.createProperty("http://www.w3.org/2004/02/skos/core#prefLabel");
-	private static Property ogc_as_wkt = response_model.createProperty("http://www.opengis.net/ont/geosparql#asWKT");
-	private static Property sf_polygon = response_model.createProperty("http://www.opengis.net/ont/sf#Polygon");
-	private static Property dct_location = response_model.createProperty("http://purl.org/dc/terms/Location");
 
-	NutsService() {
-		// Set namespace prefixes for response model
-		this.response_model.setNsPrefix("nutscode", "http://data.europa.eu/nuts/code/");
-		this.response_model.setNsPrefix("launuts", "http://projekt-opal.de/launuts/");
-		this.response_model.setNsPrefix("dct", "http://purl.org/dc/terms/");
-		this.response_model.setNsPrefix("skos", "http://www.w3.org/2004/02/skos/core#");
-		this.response_model.setNsPrefix("sf", "http://www.opengis.net/ont/sf#");
-		this.response_model.setNsPrefix("ogc", "http://www.opengis.net/ont/geosparql#");
+	public void setPrefixes(Model model) {
+
+		model.setNsPrefix("nutscode", "http://data.europa.eu/nuts/code/");
+		model.setNsPrefix("launuts", "http://projekt-opal.de/launuts/");
+	    model.setNsPrefix("dct", "http://purl.org/dc/terms/");
+		model.setNsPrefix("skos", "http://www.w3.org/2004/02/skos/core#");
+		model.setNsPrefix("sf", "http://www.opengis.net/ont/sf#");
+		model.setNsPrefix("ogc", "http://www.opengis.net/ont/geosparql#");
+		
 	}
-
+	
 	public Nuts getNutsJson(String query_string) throws IOException, ParseException {
 
 		Nuts a_nut = null;
@@ -69,7 +72,7 @@ public class NutsService {
 				String nut_id = nuts.get(feature_id_type).toString();
 				String nut_level = nuts.get("level").toString();
 				String geometry_type = nuts.get("geometry_type").toString();
-				ArrayList<String[]> outer_ring = (ArrayList<String[]>) nuts.get("outer_ring");
+				ArrayList<String[]> outer_ring = (ArrayList<String[]>) nuts.get("coordinates");
 				ArrayList<String[]> inner_rings = (ArrayList<String[]>) nuts.get("inner_rings");
 
 				// If nut_id is in query parameter
@@ -101,8 +104,15 @@ public class NutsService {
 		JSONArray nuts_array = (JSONArray) parser.parse(reader);
 		return nuts_array;
 	}
+	
+	
+
 
 	public void getAllNutsTurtle() {
+		
+		Model query_model = ModelFactory.createDefaultModel();
+		Model response_model = ModelFactory.createDefaultModel();
+		setPrefixes(response_model);
 
 		// Turtle format response
 		query_model.read(new NutsService().getClass().getClassLoader().getResource("launuts.ttl").getFile().toString());
@@ -111,7 +121,7 @@ public class NutsService {
 			Statement my_st = iterator.nextStatement();
 			Resource subject = my_st.getSubject();
 
-			if (subject.toString().matches("(http:\\/\\/data\\.europa\\.eu\\/nuts\\/code\\/)(DE)(\\w+)"))
+			if (subject.toString().matches(regex_for_prefix_nutcode_from_germany))
 			{
 				Resource nuts = response_model.createResource(subject.toString());
 
@@ -139,7 +149,11 @@ public class NutsService {
 	}
 
 	public void getNutsTurtle(String query_string) {
-
+		
+		Model query_model = ModelFactory.createDefaultModel();
+		Model response_model = ModelFactory.createDefaultModel();
+		setPrefixes(response_model);
+		
 		// Turtle format response
 		query_model.read(new NutsService().getClass().getClassLoader().getResource("launuts.ttl").getFile().toString());
 		StmtIterator iterator = query_model.listStatements(new SimpleSelector(null, skos_pref_label, (RDFNode) null));
@@ -154,11 +168,11 @@ public class NutsService {
 			 */
 			if ((object.toString().equalsIgnoreCase(query_string) &&
 			// This regex is to filter only for nuts
-					subject.toString().matches("(http:\\/\\/data\\.europa\\.eu\\/nuts\\/code\\/)(DE)(\\w+)"))
+					subject.toString().matches(regex_for_prefix_nutcode_from_germany))
 
 					// This regex is to join a nutcode with its NS e.g.
 					// http://data.europa.eu/nuts/code/DEA47
-					|| (subject.toString().matches("(http:\\/\\/data\\.europa\\.eu\\/nuts\\/code\\/)" + query_string)))
+					|| (subject.toString().matches(regex_for_prefix_nutcode + query_string)))
 
 			{
 
@@ -184,7 +198,7 @@ public class NutsService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		
 	}
 
 }
