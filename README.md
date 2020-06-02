@@ -13,4 +13,11 @@ This is a spring-boot Maven app. So download this repository and in the root fol
 -   http://localhost:8080/launuts/nuts/ttl
 -   http://localhost:8080/launuts/nuts/json
 
-### Queries for Laus coming soon
+### Some example queries for lau
+-   http://localhost:8080/launuts/lau/de_09577125/json
+-   http://localhost:8080/launuts/lau/de_09577125/ttl
+-   http://localhost:8080/launuts/lau/ellingen/json
+-   http://localhost:8080/launuts/lau/ellingen/ttl
+-   http://localhost:8080/launuts/lau/ttl
+-   http://localhost:8080/launuts/lau/json
+
