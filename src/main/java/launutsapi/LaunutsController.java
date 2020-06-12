@@ -41,7 +41,8 @@ public class LaunutsController {
 	public List<Nuts> getNutsJson(@PathVariable String query_string) throws IOException, ParseException {
 		
 		//Validate input: If user trying to enter a nut id
-		if(query_string.matches(".*\\d.*") && !(query_string.toLowerCase().matches("^((de)|(de\\D))((\\d{1})|(\\d{2})|(\\d{3}))$"))) {
+		if(!query_string.matches(".*\\d.*")
+				&& !(query_string.toLowerCase().matches("^((de)|(de\\D))((\\d{1})|(\\d{2})|(\\d{3})|(\\d{1}\\D))$"))) {
 	
 			nut = new Nuts(notification);	
 			return Arrays.asList(nut);	
@@ -70,7 +71,8 @@ public class LaunutsController {
 	public String getNutTurtle(@PathVariable String query_string, HttpServletResponse response) throws IOException, ParseException {
 		
 		//Validate input: If user trying to enter a nut id
-		if(query_string.matches(".*\\d.*") && !(query_string.toLowerCase().matches("^((de)|(de\\D))((\\d{1})|(\\d{2})|(\\d{3}))$"))) {
+		if(!query_string.matches(".*\\d.*")
+				&& !(query_string.toLowerCase().matches("^((de)|(de\\D))((\\d{1})|(\\d{2})|(\\d{3})|(\\d{1}\\D))$"))) {
 			return notification;
 		}
 		else { 	

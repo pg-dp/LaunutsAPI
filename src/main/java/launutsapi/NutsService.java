@@ -54,7 +54,7 @@ public class NutsService {
 	
 	public Nuts getNutsJson(String query_string) throws IOException, ParseException {
 
-		Nuts a_nut = null;
+		Nuts a_nut = new Nuts();
 
 		// JSON format response
 		try {
