@@ -55,7 +55,7 @@ public class LauService {
 
 	public Lau getLauJson(String query_string) throws IOException, ParseException {
 
-		Lau a_lau = null;
+		Lau a_lau = new Lau();
 
 		// JSON format response
 		try {
@@ -75,14 +75,14 @@ public class LauService {
 				ArrayList<String[]> coordinates = (ArrayList<String[]>) lau.get("coordinates");
 				ArrayList<String[]> inner_rings = (ArrayList<String[]>) lau.get("inner_rings");
 				
-				// If nut_id is in query parameter
-				if (query_string.toLowerCase().matches(lau_id.toLowerCase())) {
+				// If lau_id is in query parameter
+				if (query_string.equalsIgnoreCase(lau_id.toLowerCase())) {
 					a_lau = new Lau(lau_id, lau_name, geometry_type, coordinates, inner_rings, "Query was successful");
 				}
 
-				// If nut_name is in query parameter
+				// If lau_name is in query parameter
 				
-				else if (query_string.equalsIgnoreCase(lau_name) || query_string.toLowerCase().matches("^("+query_string.toLowerCase()+")")) {
+				else if (query_string.replaceAll("\\s+","").equalsIgnoreCase(lau_name.replaceAll("\\s+",""))) {
 					a_lau = new Lau(lau_id, lau_name, geometry_type, coordinates, inner_rings, "Query was successful");
 				}
 
