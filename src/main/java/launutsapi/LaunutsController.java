@@ -38,7 +38,7 @@ public class LaunutsController {
 	public List<Nuts> getNutsJson(@PathVariable String queryString) throws IOException, ParseException {
 
 		// Validate input: If user trying to enter a nut id
-		if (!queryString.matches(".*\\d.*")
+		if (queryString.matches(".*\\d.*")
 				&& !(queryString.toLowerCase().matches("^((de)|(de\\D))((\\d{1})|(\\d{2})|(\\d{3})|(\\d{1}\\D))$"))) {
 
 			nuts = new Nuts(NOTIFICATION);

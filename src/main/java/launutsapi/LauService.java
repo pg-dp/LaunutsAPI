@@ -30,6 +30,7 @@ public class LauService {
 	protected static final String JSON_RESOURCE_FILE_NAME = "LAU_Polygons.json";
 	protected static final String FEATURE_NAME_TYPE = "lau_label";
 	protected static final String FEATURE_ID_TYPE = "gisco_id";
+	protected static final String REGEX_FOR_PREFIX_OF_LAUCODE_FROM_GERMANY = "(http:\\/\\/projekt-opal\\.de\\/launuts\\/lau\\/DE\\/)";
 	
 	private static JSONParser parser = new JSONParser();
 	private static Reader reader;
@@ -41,16 +42,20 @@ public class LauService {
 	protected static Property ogc_as_wkt = ResourceFactory.createProperty("http://www.opengis.net/ont/geosparql#asWKT");
 	protected static Property sf_polygon = ResourceFactory.createProperty("http://www.opengis.net/ont/sf#Polygon");
 	protected static Property dct_location = ResourceFactory.createProperty("http://purl.org/dc/terms/Location");
-	protected static String regex_for_prefix_of_laucode_from_germany = "(http:\\/\\/projekt-opal\\.de\\/launuts\\/lau\\/DE\\/)";
+	protected static Property dcat_centroid = ResourceFactory.createProperty("https://www.w3.org/ns/dcat#centroid");
+	protected static Property sf_point = ResourceFactory.createProperty("http://www.opengis.net/ont/sf#Point");
+	
 
 	public void setPrefixes(Model model) {
 
+		model.setNsPrefix("nutscode", "http://data.europa.eu/nuts/code/");
 		model.setNsPrefix("laude", "http://projekt-opal.de/launuts/lau/DE/");
 		model.setNsPrefix("launuts", "http://projekt-opal.de/launuts/");
 		model.setNsPrefix("dct", "http://purl.org/dc/terms/");
 		model.setNsPrefix("skos", "http://www.w3.org/2004/02/skos/core#");
 		model.setNsPrefix("sf", "http://www.opengis.net/ont/sf#");
 		model.setNsPrefix("ogc", "http://www.opengis.net/ont/geosparql#");
+		model.setNsPrefix("dcat", "https://www.w3.org/ns/dcat#");
 
 	}
 
@@ -110,7 +115,7 @@ public class LauService {
 
 		Model queryModel = ModelFactory.createDefaultModel();
 		Model responseModel = ModelFactory.createDefaultModel();
-		setPrefixes(responseModel);
+		
 		Property propertyToCheck = null;
 
 		// Turtle format response
@@ -138,22 +143,34 @@ public class LauService {
 
 			// This regex is to join a nutcode with its NS e.g.
 			// http://data.europa.eu/nuts/code/DEA47
-					(subject.toString().matches(regex_for_prefix_of_laucode_from_germany + "\\d{8}"))))
+					(subject.toString().matches(REGEX_FOR_PREFIX_OF_LAUCODE_FROM_GERMANY + "\\d{8}"))))
 
 			{
-
+				setPrefixes(responseModel);
 				Resource lau = responseModel.createResource(subject.toString());
 
 				// Get all the properties with statements of the nuts
-				StmtIterator allStatements = subject.listProperties();
-				while (allStatements.hasNext()) {
-					Statement aStatementOutofAllStatements = allStatements.nextStatement();
-					if (!aStatementOutofAllStatements.getObject().isAnon())
-						lau.addProperty(aStatementOutofAllStatements.getPredicate(), aStatementOutofAllStatements.getObject());
+				StmtIterator StatementsOfAllProperties = subject.listProperties();
+				while (StatementsOfAllProperties.hasNext()) {
+					Statement aStatementOutOfAllStatements = StatementsOfAllProperties.nextStatement();
+					if (!aStatementOutOfAllStatements.getObject().isAnon())
+						lau.addProperty(aStatementOutOfAllStatements.getPredicate(),
+								aStatementOutOfAllStatements.getObject());
 					else {
-						Resource blankNode = (Resource) aStatementOutofAllStatements.getObject();
-						lau.addProperty(dct_location, responseModel.createResource().addProperty(RDF.type, sf_polygon)
-								.addProperty(ogc_as_wkt, blankNode.getProperty(ogc_as_wkt).getObject()));
+
+						Resource blankNode = (Resource) aStatementOutOfAllStatements.getObject();
+						if (!blankNode.hasProperty(dcat_centroid))
+							lau.addProperty(dct_location,
+									responseModel.createResource().addProperty(RDF.type, sf_polygon)
+											.addProperty(ogc_as_wkt, blankNode.getProperty(ogc_as_wkt).getObject()));
+						else {
+							RDFNode centroid = blankNode.getProperty(dcat_centroid).getProperty(ogc_as_wkt).getObject();
+							lau.addProperty(dct_location,
+									responseModel.createResource().addProperty(RDF.type, sf_polygon)
+											.addProperty(ogc_as_wkt, blankNode.getProperty(ogc_as_wkt).getObject())
+											.addProperty(dcat_centroid, responseModel.createResource()
+													.addProperty(RDF.type, sf_point).addProperty(sf_point, centroid)));
+						}
 					}
 				}
 			}
@@ -172,7 +189,6 @@ public class LauService {
 
 		Model queryModel = ModelFactory.createDefaultModel();
 		Model responseModel = ModelFactory.createDefaultModel();
-		setPrefixes(responseModel);
 
 		// Turtle format response
 		queryModel.read(new NutsService().getClass().getClassLoader().getResource("launuts.ttl").getFile().toString());
@@ -182,18 +198,31 @@ public class LauService {
 			Resource subject = skosStatement.getSubject();
 
 			if (subject.toString().matches("http:\\/\\/projekt-opal\\.de\\/launuts\\/lau\\/DE\\/\\d{8}")) {
-				Resource nuts = responseModel.createResource(subject.toString());
+				setPrefixes(responseModel);
+				Resource lau = responseModel.createResource(subject.toString());
 
 				// Get all the properties with statements of the nuts
-				StmtIterator allStatementsIterator = subject.listProperties();
-				while (allStatementsIterator.hasNext()) {
-					Statement aStatementOutOfAllStatements = allStatementsIterator.nextStatement();
+				StmtIterator StatementsOfAllProperties = subject.listProperties();
+				while (StatementsOfAllProperties.hasNext()) {
+					Statement aStatementOutOfAllStatements = StatementsOfAllProperties.nextStatement();
 					if (!aStatementOutOfAllStatements.getObject().isAnon())
-						nuts.addProperty(aStatementOutOfAllStatements.getPredicate(), aStatementOutOfAllStatements.getObject());
+						lau.addProperty(aStatementOutOfAllStatements.getPredicate(),
+								aStatementOutOfAllStatements.getObject());
 					else {
+
 						Resource blankNode = (Resource) aStatementOutOfAllStatements.getObject();
-						nuts.addProperty(dct_location, responseModel.createResource().addProperty(RDF.type, sf_polygon)
-								.addProperty(ogc_as_wkt, blankNode.getProperty(ogc_as_wkt).getObject()));
+						if (!blankNode.hasProperty(dcat_centroid))
+							lau.addProperty(dct_location,
+									responseModel.createResource().addProperty(RDF.type, sf_polygon)
+											.addProperty(ogc_as_wkt, blankNode.getProperty(ogc_as_wkt).getObject()));
+						else {
+							RDFNode centroid = blankNode.getProperty(dcat_centroid).getProperty(ogc_as_wkt).getObject();
+							lau.addProperty(dct_location,
+									responseModel.createResource().addProperty(RDF.type, sf_polygon)
+											.addProperty(ogc_as_wkt, blankNode.getProperty(ogc_as_wkt).getObject())
+											.addProperty(dcat_centroid, responseModel.createResource()
+													.addProperty(RDF.type, sf_point).addProperty(sf_point, centroid)));
+						}
 					}
 				}
 			}
