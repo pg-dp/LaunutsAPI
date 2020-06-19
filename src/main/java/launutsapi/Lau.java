@@ -4,21 +4,21 @@ import java.util.ArrayList;
 
 public class Lau {
 	
-	private String lau_id;
-	private String lau_name;
-	private String geometry_type;
+	private String lauId;
+	private String lauName;
+	private String geometryType;
 	private ArrayList<String[]> coordinates;
-	private ArrayList<String[]> inner_rings;
+	private ArrayList<String[]> innerRings;
 	private String msg = "Query was not successful";
 	
 	
-	public Lau(String lau_id, String lau_name, String geometry_type, ArrayList<String[]> coordinates,
-			ArrayList<String[]> inner_rings, String msg) {
-		this.lau_id = lau_id;
-		this.lau_name = lau_name;
-		this.geometry_type = geometry_type;
+	public Lau(String lauId, String lauName, String geometryType, ArrayList<String[]> coordinates,
+			ArrayList<String[]> innerRings, String msg) {
+		this.lauId = lauId;
+		this.lauName = lauName;
+		this.geometryType = geometryType;
 		this.coordinates = coordinates;
-		this.inner_rings = inner_rings;
+		this.innerRings = innerRings;
 		this.msg = msg;
 	}
 
@@ -31,27 +31,27 @@ public class Lau {
 	}
 
 	public String getLauId() {
-		return lau_id;
+		return lauId;
 	}
 
-	public void setLauid(String lau_id) {
-		this.lau_id = lau_id;
+	public void setLauId(String lauId) {
+		this.lauId = lauId;
 	}
 
 	public String getLauName() {
-		return lau_name;
+		return lauName;
 	}
 
-	public void setLauName(String lau_name) {
-		this.lau_name = lau_name;
+	public void setLauName(String lauName) {
+		this.lauName = lauName;
 	}
 
 	public String getGeometryType() {
-		return geometry_type;
+		return geometryType;
 	}
 
-	public void setGeometryType(String geometry_type) {
-		this.geometry_type = geometry_type;
+	public void setGeometryType(String geometryType) {
+		this.geometryType = geometryType;
 	}
 
 	public ArrayList<String[]> getCoordinates() {
@@ -63,11 +63,11 @@ public class Lau {
 	}
 
 	public ArrayList<String[]> getInnerRings() {
-		return inner_rings;
+		return innerRings;
 	}
 
-	public void setInnerRings(ArrayList<String[]> inner_rings) {
-		this.inner_rings = inner_rings;
+	public void setInnerRings(ArrayList<String[]> innerRings) {
+		this.innerRings = innerRings;
 	}
 
 	public String getMsg() {
@@ -77,6 +77,8 @@ public class Lau {
 	public void setMsg(String msg) {
 		this.msg = msg;
 	}
+
+
 	
 	
 
