@@ -27,9 +27,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class LauService {
 
-	protected static String json_resource_file_name = "LAU_Polygons.json";
-	protected static String feature_name_type = "lau_label";
-	protected static String feature_id_type = "gisco_id";
+	protected static final String JSON_RESOURCE_FILE_NAME = "LAU_Polygons.json";
+	protected static final String FEATURE_NAME_TYPE = "lau_label";
+	protected static final String FEATURE_ID_TYPE = "gisco_id";
+	protected static final String REGEX_FOR_PREFIX_OF_LAUCODE_FROM_GERMANY = "(http:\\/\\/projekt-opal\\.de\\/launuts\\/lau\\/DE\\/)";
+	
 	private static JSONParser parser = new JSONParser();
 	private static Reader reader;
 
@@ -40,50 +42,54 @@ public class LauService {
 	protected static Property ogc_as_wkt = ResourceFactory.createProperty("http://www.opengis.net/ont/geosparql#asWKT");
 	protected static Property sf_polygon = ResourceFactory.createProperty("http://www.opengis.net/ont/sf#Polygon");
 	protected static Property dct_location = ResourceFactory.createProperty("http://purl.org/dc/terms/Location");
-	protected static String regex_for_prefix_of_laucode_from_germany = "(http:\\/\\/projekt-opal\\.de\\/launuts\\/lau\\/DE\\/)";
+	protected static Property dcat_centroid = ResourceFactory.createProperty("https://www.w3.org/ns/dcat#centroid");
+	protected static Property sf_point = ResourceFactory.createProperty("http://www.opengis.net/ont/sf#Point");
+	
 
 	public void setPrefixes(Model model) {
 
+		model.setNsPrefix("nutscode", "http://data.europa.eu/nuts/code/");
 		model.setNsPrefix("laude", "http://projekt-opal.de/launuts/lau/DE/");
 		model.setNsPrefix("launuts", "http://projekt-opal.de/launuts/");
 		model.setNsPrefix("dct", "http://purl.org/dc/terms/");
 		model.setNsPrefix("skos", "http://www.w3.org/2004/02/skos/core#");
 		model.setNsPrefix("sf", "http://www.opengis.net/ont/sf#");
 		model.setNsPrefix("ogc", "http://www.opengis.net/ont/geosparql#");
+		model.setNsPrefix("dcat", "https://www.w3.org/ns/dcat#");
 
 	}
 
-	public Lau getLauJson(String query_string) throws IOException, ParseException {
+	public Lau getLauJson(String queryString) throws IOException, ParseException {
 
-		Lau a_lau = null;
+		Lau a_lau = new Lau();
 
 		// JSON format response
 		try {
-			reader = new FileReader(new NutsService().getClass().getClassLoader().getResource(json_resource_file_name)
+			reader = new FileReader(new NutsService().getClass().getClassLoader().getResource(JSON_RESOURCE_FILE_NAME)
 					.getFile().toString());
-			JSONArray lau_array = (JSONArray) parser.parse(reader);
-			Iterator<JSONObject> lauIterator = lau_array.iterator();
-			System.out.println(query_string);
+			JSONArray lauArray = (JSONArray) parser.parse(reader);
+			Iterator<JSONObject> lauIterator = lauArray.iterator();
+			System.out.println(queryString);
 			while (lauIterator.hasNext()) {
 
 				// get next nuts object
 				JSONObject lau = lauIterator.next();
 
-				String lau_name = lau.get(feature_name_type).toString();
-				String lau_id = lau.get(feature_id_type).toString();
-				String geometry_type = lau.get("geometry_type").toString();
+				String lauName = lau.get(FEATURE_NAME_TYPE).toString();
+				String lauId = lau.get(FEATURE_ID_TYPE).toString();
+				String geometryType = lau.get("geometry_type").toString();
 				ArrayList<String[]> coordinates = (ArrayList<String[]>) lau.get("coordinates");
-				ArrayList<String[]> inner_rings = (ArrayList<String[]>) lau.get("inner_rings");
+				ArrayList<String[]> innerRings = (ArrayList<String[]>) lau.get("inner_rings");
 				
-				// If nut_id is in query parameter
-				if (query_string.toLowerCase().matches(lau_id.toLowerCase())) {
-					a_lau = new Lau(lau_id, lau_name, geometry_type, coordinates, inner_rings, "Query was successful");
+				// If lau_id is in query parameter
+				if (queryString.equalsIgnoreCase(lauId.toLowerCase())) {
+					a_lau = new Lau(lauId, lauName, geometryType, coordinates, innerRings, "Query was successful");
 				}
 
-				// If nut_name is in query parameter
+				// If lau_name is in query parameter
 				
-				else if (query_string.equalsIgnoreCase(lau_name) || query_string.toLowerCase().matches("^("+query_string.toLowerCase()+")")) {
-					a_lau = new Lau(lau_id, lau_name, geometry_type, coordinates, inner_rings, "Query was successful");
+				else if (queryString.replaceAll("\\s+","").equalsIgnoreCase(lauName.replaceAll("\\s+",""))) {
+					a_lau = new Lau(lauId, lauName, geometryType, coordinates, innerRings, "Query was successful");
 				}
 
 			}
@@ -98,68 +104,80 @@ public class LauService {
 	
 	public JSONArray getAllLauJson() throws IOException, ParseException {
 
-		reader = new FileReader(new NutsService().getClass().getClassLoader().getResource(json_resource_file_name)
+		reader = new FileReader(new NutsService().getClass().getClassLoader().getResource(JSON_RESOURCE_FILE_NAME)
 				.getFile().toString());
-		JSONArray lau_array = (JSONArray) parser.parse(reader);
-		return lau_array;
+		JSONArray lauArray = (JSONArray) parser.parse(reader);
+		return lauArray;
 	}
 	
 	
-	public void getLauTurtle(String query_string) {
+	public void getLauTurtle(String queryString) {
 
-		Model query_model = ModelFactory.createDefaultModel();
-		Model response_model = ModelFactory.createDefaultModel();
-		setPrefixes(response_model);
-		Property property_to_check = null;
+		Model queryModel = ModelFactory.createDefaultModel();
+		Model responseModel = ModelFactory.createDefaultModel();
+		
+		Property propertyToCheck = null;
 
 		// Turtle format response
-		query_model.read(new LauService().getClass().getClassLoader().getResource("launuts.ttl").getFile().toString());
+		queryModel.read(new LauService().getClass().getClassLoader().getResource("launuts.ttl").getFile().toString());
 
 		// Query_string is a laucode
-		if (query_string.matches("\\d{8}"))
-			property_to_check = skos_notation;
+		if (queryString.matches("\\d{8}"))
+			propertyToCheck = skos_notation;
 
 		// Query string is a name of the lau
 		else
-			property_to_check = skos_pref_label;
+			propertyToCheck = skos_pref_label;
 
-		StmtIterator iterator = query_model.listStatements(new SimpleSelector(null, property_to_check, (RDFNode) null));
+		StmtIterator iterator = queryModel.listStatements(new SimpleSelector(null, propertyToCheck, (RDFNode) null));
 		while (iterator.hasNext()) {
-			Statement my_st = iterator.nextStatement();
-			Resource subject = my_st.getSubject();
-			RDFNode object = my_st.getObject();
+			Statement statementOfPropertyToCheck = iterator.nextStatement();
+			Resource subject = statementOfPropertyToCheck.getSubject();
+			RDFNode object = statementOfPropertyToCheck.getObject();
 
 			/**
 			 * If user provided nuts label e.g. "Paderborn" in query parameter OR If use
 			 * provided nuts code e.g. DEA47 in query parameter
 			 */
-			if ((object.toString().equalsIgnoreCase(query_string) &&
+			if ((object.toString().equalsIgnoreCase(queryString) &&
 
 			// This regex is to join a nutcode with its NS e.g.
 			// http://data.europa.eu/nuts/code/DEA47
-					(subject.toString().matches(regex_for_prefix_of_laucode_from_germany + "\\d{8}"))))
+					(subject.toString().matches(REGEX_FOR_PREFIX_OF_LAUCODE_FROM_GERMANY + "\\d{8}"))))
 
 			{
-
-				Resource lau = response_model.createResource(subject.toString());
+				setPrefixes(responseModel);
+				Resource lau = responseModel.createResource(subject.toString());
 
 				// Get all the properties with statements of the nuts
-				StmtIterator st_iterator = subject.listProperties();
-				while (st_iterator.hasNext()) {
-					Statement st = st_iterator.nextStatement();
-					if (!st.getObject().isAnon())
-						lau.addProperty(st.getPredicate(), st.getObject());
+				StmtIterator StatementsOfAllProperties = subject.listProperties();
+				while (StatementsOfAllProperties.hasNext()) {
+					Statement aStatementOutOfAllStatements = StatementsOfAllProperties.nextStatement();
+					if (!aStatementOutOfAllStatements.getObject().isAnon())
+						lau.addProperty(aStatementOutOfAllStatements.getPredicate(),
+								aStatementOutOfAllStatements.getObject());
 					else {
-						Resource blank_node = (Resource) st.getObject();
-						lau.addProperty(dct_location, response_model.createResource().addProperty(RDF.type, sf_polygon)
-								.addProperty(ogc_as_wkt, blank_node.getProperty(ogc_as_wkt).getObject()));
+
+						Resource blankNode = (Resource) aStatementOutOfAllStatements.getObject();
+						if (!blankNode.hasProperty(dcat_centroid))
+							lau.addProperty(dct_location,
+									responseModel.createResource().addProperty(RDF.type, sf_polygon)
+											.addProperty(ogc_as_wkt, blankNode.getProperty(ogc_as_wkt).getObject()));
+						else {
+							RDFNode centroid = blankNode.getProperty(dcat_centroid).getProperty(ogc_as_wkt).getObject();
+							lau.addProperty(dct_location,
+									responseModel.createResource().addProperty(RDF.type, sf_polygon)
+											.addProperty(ogc_as_wkt, blankNode.getProperty(ogc_as_wkt).getObject())
+											.addProperty(dcat_centroid, responseModel.createResource()
+													.addProperty(RDF.type, sf_point).addProperty(sf_point, centroid)));
+						}
 					}
 				}
 			}
 		}
 
 		try {
-			response_model.write(new PrintStream("sample.ttl"), "TURTLE");
+			responseModel.write(new PrintStream("sample.ttl"), "TURTLE");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -169,36 +187,48 @@ public class LauService {
 
 	public void getAllLauTurtle() {
 
-		Model query_model = ModelFactory.createDefaultModel();
-		Model response_model = ModelFactory.createDefaultModel();
-		setPrefixes(response_model);
+		Model queryModel = ModelFactory.createDefaultModel();
+		Model responseModel = ModelFactory.createDefaultModel();
 
 		// Turtle format response
-		query_model.read(new NutsService().getClass().getClassLoader().getResource("launuts.ttl").getFile().toString());
-		StmtIterator iterator = query_model.listStatements(new SimpleSelector(null, skos_notation, (RDFNode) null));
+		queryModel.read(new NutsService().getClass().getClassLoader().getResource("launuts.ttl").getFile().toString());
+		StmtIterator iterator = queryModel.listStatements(new SimpleSelector(null, skos_notation, (RDFNode) null));
 		while (iterator.hasNext()) {
-			Statement my_st = iterator.nextStatement();
-			Resource subject = my_st.getSubject();
+			Statement skosStatement = iterator.nextStatement();
+			Resource subject = skosStatement.getSubject();
 
 			if (subject.toString().matches("http:\\/\\/projekt-opal\\.de\\/launuts\\/lau\\/DE\\/\\d{8}")) {
-				Resource nuts = response_model.createResource(subject.toString());
+				setPrefixes(responseModel);
+				Resource lau = responseModel.createResource(subject.toString());
 
 				// Get all the properties with statements of the nuts
-				StmtIterator st_iterator = subject.listProperties();
-				while (st_iterator.hasNext()) {
-					Statement st = st_iterator.nextStatement();
-					if (!st.getObject().isAnon())
-						nuts.addProperty(st.getPredicate(), st.getObject());
+				StmtIterator StatementsOfAllProperties = subject.listProperties();
+				while (StatementsOfAllProperties.hasNext()) {
+					Statement aStatementOutOfAllStatements = StatementsOfAllProperties.nextStatement();
+					if (!aStatementOutOfAllStatements.getObject().isAnon())
+						lau.addProperty(aStatementOutOfAllStatements.getPredicate(),
+								aStatementOutOfAllStatements.getObject());
 					else {
-						Resource blank_node = (Resource) st.getObject();
-						nuts.addProperty(dct_location, response_model.createResource().addProperty(RDF.type, sf_polygon)
-								.addProperty(ogc_as_wkt, blank_node.getProperty(ogc_as_wkt).getObject()));
+
+						Resource blankNode = (Resource) aStatementOutOfAllStatements.getObject();
+						if (!blankNode.hasProperty(dcat_centroid))
+							lau.addProperty(dct_location,
+									responseModel.createResource().addProperty(RDF.type, sf_polygon)
+											.addProperty(ogc_as_wkt, blankNode.getProperty(ogc_as_wkt).getObject()));
+						else {
+							RDFNode centroid = blankNode.getProperty(dcat_centroid).getProperty(ogc_as_wkt).getObject();
+							lau.addProperty(dct_location,
+									responseModel.createResource().addProperty(RDF.type, sf_polygon)
+											.addProperty(ogc_as_wkt, blankNode.getProperty(ogc_as_wkt).getObject())
+											.addProperty(dcat_centroid, responseModel.createResource()
+													.addProperty(RDF.type, sf_point).addProperty(sf_point, centroid)));
+						}
 					}
 				}
 			}
 		}
 		try {
-			response_model.write(new PrintStream("sample.ttl"), "TURTLE");
+			responseModel.write(new PrintStream("sample.ttl"), "TURTLE");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

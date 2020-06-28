@@ -4,23 +4,23 @@ import java.util.ArrayList;
 
 public class Nuts {
 
-	private String nuts_id;
-	private String nuts_name;
-	private String geometry_type;
-	private String nuts_level;
+	private String nutsId;
+	private String nutsName;
+	private String geometryType;
+	private String nutsLevel;
 	private ArrayList<String[]> coordinates;
-	private ArrayList<String[]> inner_rings;
+	private ArrayList<String[]> innerRings;
 	private String msg = "Query was not successful";
 	
-	public Nuts(String nuts_id, String nuts_name, String geometry_type, String nuts_level, ArrayList<String[]> coordinates,
-			ArrayList<String[]> inner_rings, String msg) {
+	public Nuts(String nutsId, String nutsName, String geometryType, String nutsLevel, ArrayList<String[]> coordinates,
+			ArrayList<String[]> innerRings, String msg) {
 		super();
-		this.nuts_id = nuts_id;
-		this.nuts_name = nuts_name;
-		this.geometry_type = geometry_type;
-		this.nuts_level = nuts_level;
+		this.nutsId = nutsId;
+		this.nutsName = nutsName;
+		this.geometryType = geometryType;
+		this.nutsLevel = nutsLevel;
 		this.coordinates = coordinates;
-		this.inner_rings = inner_rings;
+		this.innerRings = innerRings;
 		this.msg = msg;
 	}
 	
@@ -32,36 +32,36 @@ public class Nuts {
 		
 	}
 
-	public String getNutsid() {
-		return nuts_id;
+	public String getNutsId() {
+		return nutsId;
 	}
 
-	public void setNutsId(String nuts_id) {
-		this.nuts_id = nuts_id;
+	public void setNutsId(String nutsId) {
+		this.nutsId = nutsId;
 	}
 
 	public String getNutsName() {
-		return nuts_name;
+		return nutsName;
 	}
 
-	public void setNutsName(String nuts_name) {
-		this.nuts_name = nuts_name;
+	public void setNutsName(String nutsName) {
+		this.nutsName = nutsName;
 	}
 
 	public String getGeometryType() {
-		return geometry_type;
+		return geometryType;
 	}
 
-	public void setGeometryType(String geometry_type) {
-		this.geometry_type = geometry_type;
+	public void setGeometryType(String geometryType) {
+		this.geometryType = geometryType;
 	}
 
 	public String getNutsLevel() {
-		return nuts_level;
+		return nutsLevel;
 	}
 
-	public void setNutsLevel(String nuts_level) {
-		this.nuts_level = nuts_level;
+	public void setNutsLevel(String nutsLevel) {
+		this.nutsLevel = nutsLevel;
 	}
 
 	public ArrayList<String[]> getCoordinates() {
@@ -73,11 +73,11 @@ public class Nuts {
 	}
 
 	public ArrayList<String[]> getInnerRings() {
-		return inner_rings;
+		return innerRings;
 	}
 
-	public void setInnerRings(ArrayList<String[]> inner_rings) {
-		this.inner_rings = inner_rings;
+	public void setInnerRings(ArrayList<String[]> innerRings) {
+		this.innerRings = innerRings;
 	}
 
 	public String getMsg() {
@@ -87,7 +87,6 @@ public class Nuts {
 	public void setMsg(String msg) {
 		this.msg = msg;
 	}
-
 
 	
 	
