@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -111,7 +112,7 @@ public class LauService {
 	}
 	
 	
-	public void getLauTurtle(String queryString) {
+	public String getLauTurtle(String queryString) {
 
 		Model queryModel = ModelFactory.createDefaultModel();
 		Model responseModel = ModelFactory.createDefaultModel();
@@ -176,16 +177,14 @@ public class LauService {
 			}
 		}
 
-		try {
-			responseModel.write(new PrintStream("sample.ttl"), "TURTLE");
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		StringWriter response = new StringWriter();
+		responseModel.write(response, "TURTLE");
+		
+		return response.toString();
 
 	}
 
-	public void getAllLauTurtle() {
+	public String getAllLauTurtle() {
 
 		Model queryModel = ModelFactory.createDefaultModel();
 		Model responseModel = ModelFactory.createDefaultModel();
@@ -227,12 +226,10 @@ public class LauService {
 				}
 			}
 		}
-		try {
-			responseModel.write(new PrintStream("sample.ttl"), "TURTLE");
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		StringWriter response = new StringWriter();
+		responseModel.write(response, "TURTLE");
+		
+		return response.toString();
 	}
 
 }

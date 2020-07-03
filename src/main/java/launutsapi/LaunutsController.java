@@ -62,7 +62,7 @@ public class LaunutsController {
 	}
 
 	@RequestMapping("/launuts/nuts/{queryString}/ttl")
-	public String getNutTurtle(@PathVariable String queryString, HttpServletResponse response)
+	public String getNutsTurtle(@PathVariable String queryString, HttpServletResponse response)
 			throws IOException, ParseException {
 
 		// Validate input: If user trying to enter a nut id
@@ -70,16 +70,9 @@ public class LaunutsController {
 				&& !(queryString.toLowerCase().matches("^((de)|(de\\D))((\\d{1})|(\\d{2})|(\\d{3})|(\\d{1}\\D))$"))) {
 			return NOTIFICATION;
 		} else {
-			nutService.getNutsTurtle(queryString.toUpperCase());
-			response.setContentType("text/plain;charset=UTF-8");
-			response.setHeader("Content-Disposition", "attachment; filename=\"sample.ttl\"");
-			InputStream inputStream = new FileInputStream(new File("sample.ttl"));
-			int nRead;
-			while ((nRead = inputStream.read()) != -1) {
-				response.getWriter().write(nRead);
-			}
+			return  nutService.getNutsTurtle(queryString.toUpperCase());		
 		}
-		return null;
+		
 	}
 
 	@RequestMapping("/launuts/lau/{queryString}/ttl")
@@ -91,16 +84,9 @@ public class LaunutsController {
 			return NOTIFICATION;
 		} else {
 			String laucode = queryString.toLowerCase().replace("de_", "");
-			lauService.getLauTurtle(laucode.toUpperCase());
-			response.setContentType("text/plain;charset=UTF-8");
-			response.setHeader("Content-Disposition", "attachment; filename=\"sample.ttl\"");
-			InputStream inputStream = new FileInputStream(new File("sample.ttl"));
-			int nRead;
-			while ((nRead = inputStream.read()) != -1) {
-				response.getWriter().write(nRead);
-			}
+			return lauService.getLauTurtle(laucode.toUpperCase());
 		}
-		return null;
+		
 	}
 
 	@RequestMapping("/launuts/nuts/json")
@@ -114,27 +100,13 @@ public class LaunutsController {
 	}
 
 	@RequestMapping("/launuts/nuts/ttl")
-	public void getAllNutsTurtle(HttpServletResponse response) throws IOException, ParseException {
-		nutService.getAllNutsTurtle();
-		response.setContentType("text/plain;charset=UTF-8");
-		response.setHeader("Content-Disposition", "attachment; filename=\"sample.ttl\"");
-		InputStream inputStream = new FileInputStream(new File("sample.ttl"));
-		int nRead;
-		while ((nRead = inputStream.read()) != -1) {
-			response.getWriter().write(nRead);
-		}
+	public String getAllNutsTurtle(HttpServletResponse response) throws IOException, ParseException {
+		return nutService.getAllNutsTurtle();	
 	}
 
 	@RequestMapping("/launuts/lau/ttl")
-	public void getAllLauTurtle(HttpServletResponse response) throws IOException, ParseException {
-		lauService.getAllLauTurtle();
-		response.setContentType("text/plain;charset=UTF-8");
-		response.setHeader("Content-Disposition", "attachment; filename=\"sample.ttl\"");
-		InputStream inputStream = new FileInputStream(new File("sample.ttl"));
-		int nRead;
-		while ((nRead = inputStream.read()) != -1) {
-			response.getWriter().write(nRead);
-		}
+	public String getAllLauTurtle(HttpServletResponse response) throws IOException, ParseException {
+		return lauService.getAllLauTurtle();
 	}
 
 	@RequestMapping("/**")
